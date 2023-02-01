@@ -1,0 +1,7 @@
+{
+  "filter": {
+    "centroids": [2, 8],
+    "distance_type": ["EUCLIDEAN", "L1", "COSINE"],
+    "iterations": [10, 10000, 100, 1000]
+  }
+}
