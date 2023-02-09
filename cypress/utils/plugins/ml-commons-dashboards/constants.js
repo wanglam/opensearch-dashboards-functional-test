@@ -15,10 +15,8 @@ const BASE_MLC_PATH = BASE_PATH + '/app/mlCommonsPlugin';
 
 export const MLC_URL = {
   ROOT: BASE_MLC_PATH + '/',
-  MONITORING: BASE_MLC_PATH + '/monitoring',
+  OVERVIEW: BASE_MLC_PATH + '/overview',
 };
-
-export const MLC_FIXTURE_BASE_PATH = 'plugins/ml-commons-dashboards/';
 
 export const MLC_API_BASE = `${BACKEND_BASE_PATH}/_plugins/_ml`;
 
