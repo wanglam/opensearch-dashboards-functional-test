@@ -58,7 +58,7 @@ describe('MLC Overview page', () => {
 
     cy.contains(uploadedModelId)
       .closest('tr')
-      .get('[aria-label="view detail"]')
+      .find('[aria-label="view detail"]')
       .click();
 
     cy.contains('.euiFlyoutHeader > h3', uploadModelName);
