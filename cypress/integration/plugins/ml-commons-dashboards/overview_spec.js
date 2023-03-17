@@ -96,5 +96,18 @@ if (Cypress.env('ML_COMMONS_DASHBOARDS_ENABLED')) {
       cy.contains('.euiFlyoutHeader > h3', uploadModelName);
       cy.contains('.euiFlyoutBody', uploadedModelId);
     });
+
+    it('should copy model id to clipboard', () => {
+      cy.visit(MLC_URL.OVERVIEW);
+
+      cy.get('[aria-label="Search by name or ID"]').type(uploadModelName);
+
+      cy.contains(uploadedModelId).click();
+      cy.window().then((window) => {
+        window.navigator.clipboard.readText().then((text) => {
+          expect(text).to.eq(uploadedModelId);
+        });
+      });
+    });
   });
 }
