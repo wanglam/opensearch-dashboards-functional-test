@@ -110,3 +110,35 @@ Cypress.Commands.add('enableRegisterModelViaURL', () => {
     failOnStatusCode: false,
   });
 });
+
+Cypress.Commands.add('disableConnectorAccessControl', () => {
+  cy.request('PUT', `${Cypress.env('openSearchUrl')}/_cluster/settings`, {
+    transient: {
+      'plugins.ml_commons.connector_access_control_enabled': false,
+    },
+  });
+});
+
+Cypress.Commands.add('createModelConnector', (body) =>
+  cy
+    .request({
+      method: 'POST',
+      url: MLC_API.CONNECTOR_CREATE,
+      body,
+    })
+    .then(({ body }) => body)
+);
+
+Cypress.Commands.add('registerModel', (body) =>
+  cy
+    .request({
+      method: 'POST',
+      url: MLC_API.MODEL_REGISTER,
+      body,
+    })
+    .then(({ body }) => body)
+);
+
+Cypress.Commands.add('deleteModelConnector', (connectorId) =>
+  cy.request('DELETE', `${MLC_API.CONNECTOR_BASE}/${connectorId}`)
+);
