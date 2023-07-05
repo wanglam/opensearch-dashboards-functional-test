@@ -235,7 +235,7 @@ if (Cypress.env('ML_COMMONS_DASHBOARDS_ENABLED')) {
           cy.deleteModelConnector(registeredConnectorId);
         }
       });
-      it('should hide remote models', () => {
+      it('should not show remote models', () => {
         cy.visit(MLC_URL.OVERVIEW);
 
         console.log('go there...');
