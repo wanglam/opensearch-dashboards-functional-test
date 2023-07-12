@@ -223,6 +223,7 @@ if (Cypress.env('ML_COMMONS_DASHBOARDS_ENABLED')) {
         if (registeredRemoteModelId) {
           cy.unloadMLCommonsModel(registeredRemoteModelId);
           cy.deleteMLCommonsModel(registeredRemoteModelId);
+          cy.wait(1000);
         }
         if (registeredConnectorId) {
           cy.deleteModelConnector(registeredConnectorId);
