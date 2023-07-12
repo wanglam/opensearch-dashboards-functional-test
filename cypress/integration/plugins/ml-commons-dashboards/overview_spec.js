@@ -145,44 +145,37 @@ if (Cypress.env('ML_COMMONS_DASHBOARDS_ENABLED')) {
       let registeredRemoteModelId;
       before(() => {
         cy.disableConnectorAccessControl();
+        cy.setEncryptionMasterKey('0000000000000001');
+        cy.setTrustedConnectorEndpointsRegex([
+          '^https://runtime\\.sagemaker\\..*\\.amazonaws\\.com/.*$',
+          '^https://api\\.openai\\.com/.*$',
+          '^https://api\\.cohere\\.ai/.*$',
+          '^https://bedrock\\..*\\.amazonaws.com/.*$',
+        ]);
         cy.wait(1000);
         cy.createModelConnector({
           name: 'SageMaker huggingface text-embedding Connector',
           description:
             'The connector to sageMaker service for a text embedding model with huggingface',
           version: 1,
-          protocol: 'aws/v1',
-          parameters: {
-            endpoint: 'runtime.sagemaker.us-west-2.amazonaws.com',
-            auth: 'Sig_V4',
-            region: 'us-west-2',
-            service_name: 'sagemaker',
-            content_type: 'application/json',
-          },
+          protocol: 'aws_sigv4',
           credential: {
             access_key: 'foo',
             secret_key: 'bar',
           },
+          parameters: {
+            region: 'ap-northeast-1',
+            service_name: 'sagemaker',
+          },
           actions: [
             {
-              predict: {
-                method: 'POST',
-                url: 'https://runtime.sagemaker.us-west-2.amazonaws.com/endpoints/huggingface-pytorch-inference-2023-04-06-09-04-03-509/invocations',
-                headers: {
-                  'content-type': 'application/json',
-                },
-                request_body:
-                  '{ "inputs": { "question": "${parameters.question}", "context": "${parameters.context}" } }',
+              action_type: 'predict',
+              method: 'POST',
+              url: 'https://runtime.sagemaker.ap-northeast-1.amazonaws.com/endpoints/pytorch-inference-2023-07-11-07-52-20-256/invocations',
+              headers: {
+                'content-type': 'application/json',
               },
-            },
-            {
-              metadata: {
-                method: 'GET',
-                url: 'https://runtime.sagemaker.us-west-2.amazonaws.com/endpoints/huggingface-pytorch-inference-2023-04-06-09-04-03-509/ping',
-                headers: {
-                  'content-type': 'application/json',
-                },
-              },
+              request_body: '{"inputs": [${parameters.inputs}]}',
             },
           ],
         }).as('createConnectResult');
@@ -238,7 +231,6 @@ if (Cypress.env('ML_COMMONS_DASHBOARDS_ENABLED')) {
       it('should not show remote models', () => {
         cy.visit(MLC_URL.OVERVIEW);
 
-        console.log('go there...');
         cy.get('[aria-label="Search by name or ID"]').type(
           registeredRemoteModelId
         );

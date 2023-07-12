@@ -119,6 +119,25 @@ Cypress.Commands.add('disableConnectorAccessControl', () => {
   });
 });
 
+Cypress.Commands.add('setEncryptionMasterKey', (masterKey) => {
+  cy.request('PUT', `${Cypress.env('openSearchUrl')}/_cluster/settings`, {
+    transient: {
+      'plugins.ml_commons.encryption.master_key': masterKey,
+    },
+  });
+});
+
+Cypress.Commands.add(
+  'setTrustedConnectorEndpointsRegex',
+  (trustedConnectorEndpointsRegex) => {
+    cy.request('PUT', `${Cypress.env('openSearchUrl')}/_cluster/settings`, {
+      transient: {
+        'plugins.ml_commons.trusted_connector_endpoints_regex': [],
+      },
+    });
+  }
+);
+
 Cypress.Commands.add('createModelConnector', (body) =>
   cy
     .request({
