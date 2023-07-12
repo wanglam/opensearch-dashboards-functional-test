@@ -236,7 +236,7 @@ if (Cypress.env('ML_COMMONS_DASHBOARDS_ENABLED')) {
           registeredRemoteModelId
         );
 
-        cy.get(table).contains(registeredRemoteModelId).should('not.exist');
+        cy.get('table').contains(registeredRemoteModelId).should('not.exist');
       });
     });
   });
