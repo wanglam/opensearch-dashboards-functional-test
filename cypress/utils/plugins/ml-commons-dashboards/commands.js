@@ -132,7 +132,8 @@ Cypress.Commands.add(
   (trustedConnectorEndpointsRegex) => {
     cy.request('PUT', `${Cypress.env('openSearchUrl')}/_cluster/settings`, {
       transient: {
-        'plugins.ml_commons.trusted_connector_endpoints_regex': [],
+        'plugins.ml_commons.trusted_connector_endpoints_regex':
+          trustedConnectorEndpointsRegex,
       },
     });
   }
