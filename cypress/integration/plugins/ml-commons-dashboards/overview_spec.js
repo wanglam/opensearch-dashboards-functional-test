@@ -236,9 +236,7 @@ if (Cypress.env('ML_COMMONS_DASHBOARDS_ENABLED')) {
           registeredRemoteModelId
         );
 
-        cy.contains(
-          'There are no results to your search. Reset the search criteria to view the deployed models.'
-        );
+        cy.get(table).contains(registeredRemoteModelId).should('not.exist');
       });
     });
   });
