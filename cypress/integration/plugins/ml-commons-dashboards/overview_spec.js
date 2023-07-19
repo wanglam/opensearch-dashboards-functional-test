@@ -145,7 +145,6 @@ if (Cypress.env('ML_COMMONS_DASHBOARDS_ENABLED')) {
       let registeredRemoteModelId;
       before(() => {
         cy.disableConnectorAccessControl();
-        cy.setEncryptionMasterKey('0000000000000001');
         cy.setTrustedConnectorEndpointsRegex([
           '^https://runtime\\.sagemaker\\..*\\.amazonaws\\.com/.*$',
           '^https://api\\.openai\\.com/.*$',

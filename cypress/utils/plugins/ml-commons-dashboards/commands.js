@@ -119,14 +119,6 @@ Cypress.Commands.add('disableConnectorAccessControl', () => {
   });
 });
 
-Cypress.Commands.add('setEncryptionMasterKey', (masterKey) => {
-  cy.request('PUT', `${Cypress.env('openSearchUrl')}/_cluster/settings`, {
-    transient: {
-      'plugins.ml_commons.encryption.master_key': masterKey,
-    },
-  });
-});
-
 Cypress.Commands.add(
   'setTrustedConnectorEndpointsRegex',
   (trustedConnectorEndpointsRegex) => {
