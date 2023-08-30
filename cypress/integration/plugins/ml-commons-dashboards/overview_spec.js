@@ -6,6 +6,10 @@ import { MLC_URL, MLC_DASHBOARD_API } from '../../../utils/constants';
 
 if (Cypress.env('ML_COMMONS_DASHBOARDS_ENABLED')) {
   describe('MLC Overview page', () => {
+    before(() => {
+      // Disable only_run_on_ml_node to avoid model upload error in case of cluster no ml nodes
+      cy.disableOnlyRunOnMLNode();
+    });
     it('should return to monitoring page when visit root', () => {
       cy.visit(MLC_URL.ROOT);
       cy.url().should('include', MLC_URL.OVERVIEW);
@@ -18,8 +22,6 @@ if (Cypress.env('ML_COMMONS_DASHBOARDS_ENABLED')) {
         .getTime()
         .toString(34)}`;
       before(() => {
-        // Disable only_run_on_ml_node to avoid model upload error in case of cluster no ml nodes
-        cy.disableOnlyRunOnMLNode();
         cy.disableNativeMemoryCircuitBreaker();
         cy.enableRegisterModelViaURL();
         cy.wait(1000);
@@ -75,36 +77,39 @@ if (Cypress.env('ML_COMMONS_DASHBOARDS_ENABLED')) {
         }
       });
 
-      it('should display page header and deployed model name, status and id', () => {
+      it('should display page header and deployed model name, status and source', () => {
         cy.visit(MLC_URL.OVERVIEW);
 
         cy.contains('h1', 'Overview');
-        cy.contains('h2', 'Deployed models');
+        cy.contains('h2', 'Models');
 
-        cy.get('[aria-label="Search by name or ID"]').type(uploadModelName);
+        cy.get('[aria-label="Search by model name or ID"]').type(
+          uploadedModelId
+        );
 
-        cy.contains(uploadedModelId)
+        cy.contains(uploadModelName)
           .closest('tr')
           .contains(uploadedModelLoadedError ? 'Not responding' : 'Responding')
           .closest('tr')
-          .contains(uploadModelName);
-
-        cy.contains('h1', 'Overview');
-        cy.contains('h2', 'Deployed models');
+          .contains('Local');
       });
 
       it('should open preview panel after view detail button click', () => {
         cy.visit(MLC_URL.OVERVIEW);
 
-        cy.get('[aria-label="Search by name or ID"]').type(uploadModelName);
+        cy.get('[aria-label="Search by model name or ID"]').type(
+          uploadedModelId
+        );
 
-        cy.contains(uploadedModelId)
+        cy.contains(uploadModelName)
           .closest('tr')
           .find('[aria-label="view detail"]')
           .click();
 
-        cy.contains('.euiFlyoutHeader > h3', uploadModelName);
-        cy.contains('.euiFlyoutBody', uploadedModelId);
+        cy.get('div[role="dialog"]').contains(uploadModelName);
+        cy.get('div[role="dialog"]').contains(uploadedModelId);
+        cy.get('div[role="dialog"]').contains('Local');
+        cy.get('div[role="dialog"]').contains('Status by node');
       });
 
       it('should show empty nodes when deployed model profiling loading', () => {
@@ -123,9 +128,11 @@ if (Cypress.env('ML_COMMONS_DASHBOARDS_ENABLED')) {
 
         cy.visit(MLC_URL.OVERVIEW);
 
-        cy.get('[aria-label="Search by name or ID"]').type(uploadModelName);
+        cy.get('[aria-label="Search by model name or ID"]').type(
+          uploadedModelId
+        );
 
-        cy.contains(uploadedModelId)
+        cy.contains(uploadModelName)
           .closest('tr')
           .find('[aria-label="view detail"]')
           .click();
@@ -141,67 +148,42 @@ if (Cypress.env('ML_COMMONS_DASHBOARDS_ENABLED')) {
     });
 
     describe('remote model', () => {
-      let registeredConnectorId;
       let registeredRemoteModelId;
+      let remoteModelName;
       before(() => {
-        cy.disableConnectorAccessControl();
-        cy.setTrustedConnectorEndpointsRegex([
-          '^https://runtime\\.sagemaker\\..*\\.amazonaws\\.com/.*$',
-          '^https://api\\.openai\\.com/.*$',
-          '^https://api\\.cohere\\.ai/.*$',
-          '^https://bedrock\\..*\\.amazonaws.com/.*$',
-        ]);
-        cy.wait(1000);
-        cy.createModelConnector({
-          name: 'SageMaker huggingface text-embedding Connector',
-          description:
-            'The connector to sageMaker service for a text embedding model with huggingface',
-          version: 1,
-          protocol: 'aws_sigv4',
-          credential: {
-            access_key: 'foo',
-            secret_key: 'bar',
-          },
-          parameters: {
-            region: 'ap-northeast-1',
-            service_name: 'sagemaker',
-          },
-          actions: [
-            {
-              action_type: 'predict',
-              method: 'POST',
-              url: 'https://runtime.sagemaker.ap-northeast-1.amazonaws.com/endpoints/pytorch-inference-2023-07-11-07-52-20-256/invocations',
-              headers: {
-                'content-type': 'application/json',
-              },
-              request_body: '{"inputs": [${parameters.inputs}]}',
+        remoteModelName = `remote sagemaker model-${new Date().getTime()}`;
+        cy.registerModel({
+          name: remoteModelName,
+          function_name: 'remote',
+          version: '1.0.0',
+          description: 'test model',
+          connector: {
+            name: 'sagemaker: embedding',
+            description: 'Test connector for Sagemaker embedding model',
+            version: 1,
+            protocol: 'aws_sigv4',
+            credential: {
+              access_key: '...',
+              secret_key: '...',
+              session_token: '...',
             },
-          ],
-        }).as('createConnectResult');
-        cy.registerModelGroup({
-          name: 'remote-model-group',
-        }).as('registerModelGroupResult');
-        cy.get('@createConnectResult')
-          .then((createConnectResult) =>
-            cy
-              .get('@registerModelGroupResult')
-              .then((registerModelGroupResult) => [
-                createConnectResult.connector_id,
-                registerModelGroupResult.model_group_id,
-              ])
-          )
-          .then(([connectorId, modelGroupId]) => {
-            registeredConnectorId = connectorId;
-            console.log(connectorId, modelGroupId);
-            return cy.registerModel({
-              name: 'remote sega maker model',
-              function_name: 'remote',
-              model_group_id: modelGroupId,
-              version: '1.0.0',
-              description: 'test model',
-              connector_id: connectorId,
-            });
-          })
+            parameters: {
+              region: 'us-west-2',
+              service_name: 'sagemaker',
+            },
+            actions: [
+              {
+                action_type: 'predict',
+                method: 'POST',
+                headers: {
+                  'content-type': 'application/json',
+                },
+                url: 'https://runtime.sagemaker.us-west-2.amazonaws.com/endpoints/lmi-model-2023-06-24-01-35-32-275/invocations',
+                request_body: '["${parameters.inputs}"]',
+              },
+            ],
+          },
+        })
           .then(({ task_id: taskId }) =>
             cy.cyclingCheckTask({
               taskId,
@@ -221,22 +203,37 @@ if (Cypress.env('ML_COMMONS_DASHBOARDS_ENABLED')) {
       after(() => {
         if (registeredRemoteModelId) {
           cy.unloadMLCommonsModel(registeredRemoteModelId);
+          cy.wait(1000);
           cy.deleteMLCommonsModel(registeredRemoteModelId);
           cy.wait(1000);
         }
-        if (registeredConnectorId) {
-          cy.deleteModelConnector(registeredConnectorId);
-        }
       });
-      it('should not show remote models', () => {
+      it('should show remote models with External source', () => {
         cy.visit(MLC_URL.OVERVIEW);
 
-        cy.get('[aria-label="Search by name or ID"]').type(
+        cy.get('[aria-label="Search by model name or ID"]').type(
           registeredRemoteModelId
         );
 
-        cy.contains('.euiTableRowCell', registeredRemoteModelId).should(
-          'not.exist'
+        cy.contains('.euiTableRowCell', remoteModelName).should('exist');
+        cy.contains('.euiTableRowCell', 'External').should('exist');
+      });
+
+      it('should show show connector details after status details clicked', () => {
+        cy.visit(MLC_URL.OVERVIEW);
+
+        cy.get('[aria-label="Search by model name or ID"]').type(
+          registeredRemoteModelId
+        );
+        cy.contains(remoteModelName)
+          .closest('tr')
+          .find('[aria-label="view detail"]')
+          .click();
+        cy.get('div[role="dialog"]').contains('External');
+        cy.get('div[role="dialog"]').contains('Connector details');
+        cy.get('div[role="dialog"]').contains('sagemaker: embedding');
+        cy.get('div[role="dialog"]').contains(
+          'Test connector for Sagemaker embedding model'
         );
       });
     });

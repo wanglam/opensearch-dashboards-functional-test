@@ -9,7 +9,7 @@ Cypress.Commands.add('cyclingCheckTask', ({ taskId, rejectOnError = true }) =>
     new Cypress.Promise((resolve, reject) => {
       const checkTask = () => {
         cy.getMLCommonsTask(taskId).then((payload) => {
-          if (payload.error) {
+          if (payload && payload.error) {
             if (rejectOnError) {
               reject(new Error(payload.error));
               return;
@@ -17,7 +17,7 @@ Cypress.Commands.add('cyclingCheckTask', ({ taskId, rejectOnError = true }) =>
             resolve(payload);
             return;
           }
-          if (payload.state === 'COMPLETED') {
+          if (payload && payload.state === 'COMPLETED') {
             resolve(payload);
             return;
           }
