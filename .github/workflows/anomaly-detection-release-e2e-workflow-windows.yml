@@ -4,22 +4,9 @@ on:
     branches: ['**']
   push:
     branches: ['**']
-jobs:
-  changes:
-    runs-on: ubuntu-latest
-    outputs:
-      tests: ${{ steps.filter.outputs.tests }}
-    steps:
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            tests:
-              - 'cypress/**/anomaly-detection-dashboards-plugin/**'
 
+jobs:
   tests:
-    needs: changes
-    ## if: ${{ needs.changes.outputs.tests == 'true' }}
     uses: ./.github/workflows/release-e2e-workflow-template-windows.yml
     with:
       test-name: Anomaly Detection
