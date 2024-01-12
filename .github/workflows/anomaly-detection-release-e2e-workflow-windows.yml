@@ -1,0 +1,24 @@
+name: Anomaly Detection Release tests workflow in Bundled OpenSearch Dashboards (Windows)
+on:
+  pull_request:
+    branches: ['**']
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      tests: ${{ steps.filter.outputs.tests }}
+    steps:
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            tests:
+              - 'cypress/**/anomaly-detection-dashboards-plugin/**'
+
+  tests:
+    needs: changes
+    if: ${{ needs.changes.outputs.tests == 'true' }}
+    uses: ./.github/workflows/release-e2e-workflow-template-windows.yml
+    with:
+      test-name: Anomaly Detection
+      test-command: yarn cypress:run-with-security --browser chrome --spec 'cypress/integration/plugins/anomaly-detection-dashboards-plugin/*'
