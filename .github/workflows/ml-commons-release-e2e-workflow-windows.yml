@@ -1,0 +1,13 @@
+name: ML Commons Release tests workflow in Bundled OpenSearch Dashboards (Windows)
+on:
+  pull_request:
+    branches: ['**']
+  push:
+    branches: ['**']
+jobs:
+  tests:
+    uses: ./.github/workflows/release-e2e-workflow-template.yml
+    with:
+      test-name: ML Commons
+      test-command: env CYPRESS_ML_COMMONS_DASHBOARDS_ENABLED=true yarn cypress:run-with-security --browser chromium --spec 'cypress/integration/plugins/ml-commons-dashboards/*'
+      osd-serve-args: --ml_commons_dashboards.enabled=true
