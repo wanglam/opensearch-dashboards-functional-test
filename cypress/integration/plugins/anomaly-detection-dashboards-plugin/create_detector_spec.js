@@ -9,7 +9,7 @@ import { selectTopItemFromFilter } from '../../../utils/helpers';
 context('Create detector workflow', () => {
   const TEST_DETECTOR_NAME = 'test-detector';
   const TEST_DETECTOR_DESCRIPTION = 'Some test detector description.';
-  // const TEST_FEATURE_NAME = 'test-feature';
+  const TEST_FEATURE_NAME = 'test-feature';
   // const TEST_TIMESTAMP_NAME = 'timestamp'; // coming from single_index_response.json fixture
   const TEST_INDEX_NAME = 'sample-ad-index';
 
@@ -58,14 +58,14 @@ context('Create detector workflow', () => {
       'exist'
     );
 
-    // // Configure model step
-    // cy.getElementByTestId('featureNameTextInput-0').type(TEST_FEATURE_NAME);
-    // selectTopItemFromFilter('featureFieldTextInput-0', false);
-    // cy.getElementByTestId('configureModelNextButton').click();
-    // cy.getElementByTestId('configureOrEditModelConfigurationTitle').should(
-    //   'not.exist'
-    // );
-    // cy.getElementByTestId('detectorJobsTitle').should('exist');
+    // Configure model step
+    cy.getElementByTestId('featureNameTextInput-0').type(TEST_FEATURE_NAME);
+    selectTopItemFromFilter('featureFieldTextInput-0', false);
+    cy.getElementByTestId('configureModelNextButton').click();
+    cy.getElementByTestId('configureOrEditModelConfigurationTitle').should(
+      'not.exist'
+    );
+    cy.getElementByTestId('detectorJobsTitle').should('exist');
 
     // // Set up detector jobs step
     // cy.getElementByTestId('detectorJobsNextButton').click();
