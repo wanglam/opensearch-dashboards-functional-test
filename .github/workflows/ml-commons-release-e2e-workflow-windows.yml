@@ -4,6 +4,7 @@ on:
     branches: ['**']
   push:
     branches: ['**']
+
 jobs:
   tests:
     uses: ./.github/workflows/release-e2e-workflow-template.yml
