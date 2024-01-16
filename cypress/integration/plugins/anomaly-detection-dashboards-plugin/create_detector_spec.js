@@ -4,11 +4,11 @@
  */
 
 import { AD_FIXTURE_BASE_PATH, AD_URL } from '../../../utils/constants';
-// import { selectTopItemFromFilter } from '../../../utils/helpers';
+import { selectTopItemFromFilter } from '../../../utils/helpers';
 
 context('Create detector workflow', () => {
-  // const TEST_DETECTOR_NAME = 'test-detector';
-  // const TEST_DETECTOR_DESCRIPTION = 'Some test detector description.';
+  const TEST_DETECTOR_NAME = 'test-detector';
+  const TEST_DETECTOR_DESCRIPTION = 'Some test detector description.';
   // const TEST_FEATURE_NAME = 'test-feature';
   // const TEST_TIMESTAMP_NAME = 'timestamp'; // coming from single_index_response.json fixture
   const TEST_INDEX_NAME = 'sample-ad-index';
@@ -44,14 +44,13 @@ context('Create detector workflow', () => {
   it('Full creation - based on real index', () => {
     // Define detector step
     cy.visit(AD_URL.CREATE_AD);
-    console.log('after visit create page');
-    // cy.getElementByTestId('defineOrEditDetectorTitle').should('exist');
-    // cy.getElementByTestId('detectorNameTextInput').type(TEST_DETECTOR_NAME);
-    // cy.getElementByTestId('detectorDescriptionTextInput').type(
-    //   TEST_DETECTOR_DESCRIPTION
-    // );
-    // cy.getElementByTestId('indicesFilter').type(`${TEST_INDEX_NAME}{enter}`);
-    // selectTopItemFromFilter('timestampFilter', false);
+    cy.getElementByTestId('defineOrEditDetectorTitle').should('exist');
+    cy.getElementByTestId('detectorNameTextInput').type(TEST_DETECTOR_NAME);
+    cy.getElementByTestId('detectorDescriptionTextInput').type(
+      TEST_DETECTOR_DESCRIPTION
+    );
+    cy.getElementByTestId('indicesFilter').type(`${TEST_INDEX_NAME}{enter}`);
+    selectTopItemFromFilter('timestampFilter', false);
 
     // cy.getElementByTestId('defineDetectorNextButton').click();
     // cy.getElementByTestId('defineOrEditDetectorTitle').should('not.exist');
