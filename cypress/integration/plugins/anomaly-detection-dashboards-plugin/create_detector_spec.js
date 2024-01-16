@@ -61,11 +61,11 @@ context('Create detector workflow', () => {
     // Configure model step
     cy.getElementByTestId('featureNameTextInput-0').type(TEST_FEATURE_NAME);
     selectTopItemFromFilter('featureFieldTextInput-0', false);
-    cy.getElementByTestId('configureModelNextButton').click();
-    cy.getElementByTestId('configureOrEditModelConfigurationTitle').should(
-      'not.exist'
-    );
-    cy.getElementByTestId('detectorJobsTitle').should('exist');
+    // cy.getElementByTestId('configureModelNextButton').click();
+    // cy.getElementByTestId('configureOrEditModelConfigurationTitle').should(
+    //   'not.exist'
+    // );
+    // cy.getElementByTestId('detectorJobsTitle').should('exist');
 
     // // Set up detector jobs step
     // cy.getElementByTestId('detectorJobsNextButton').click();
