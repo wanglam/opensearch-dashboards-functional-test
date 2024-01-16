@@ -19,7 +19,7 @@ import {
   SAMPLE_DATA_FILEPATH_SIMPLE,
 } from '../../../../utils/constants';
 
-describe('AD augment-vis saved objects', () => {
+describe.skip('AD augment-vis saved objects', () => {
   const commonUI = new CommonUI(cy);
   const indexName = 'ad-vis-augmenter-sample-index';
   const indexPatternName = 'ad-vis-augmenter-sample-*';

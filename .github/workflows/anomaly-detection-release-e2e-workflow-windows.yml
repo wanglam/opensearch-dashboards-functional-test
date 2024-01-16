@@ -10,4 +10,4 @@ jobs:
     uses: ./.github/workflows/release-e2e-workflow-template-windows.yml
     with:
       test-name: Anomaly Detection
-      test-command: yarn cypress:run-with-security --browser chrome --spec 'cypress/integration/plugins/anomaly-detection-dashboards-plugin/vis_augmenter/augment_vis_saved_object_spec.js'
+      test-command: yarn cypress:run-with-security --browser chrome --spec 'cypress/integration/plugins/anomaly-detection-dashboards-plugin/*.js'

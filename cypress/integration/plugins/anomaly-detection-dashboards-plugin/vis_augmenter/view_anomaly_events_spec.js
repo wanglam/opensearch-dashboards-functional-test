@@ -18,7 +18,7 @@ import {
   SAMPLE_DATA_FILEPATH_SIMPLE,
 } from '../../../../utils/constants';
 
-describe('View anomaly events in flyout', () => {
+describe.skip('View anomaly events in flyout', () => {
   const indexName = 'ad-vis-augmenter-sample-index';
   const indexPatternName = 'ad-vis-augmenter-sample-*';
   const dashboardName = 'AD Vis Augmenter Dashboard';

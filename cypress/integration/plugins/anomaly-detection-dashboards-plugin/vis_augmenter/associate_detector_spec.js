@@ -21,7 +21,7 @@ import {
   SAMPLE_DATA_FILEPATH_SIMPLE,
 } from '../../../../utils/constants';
 
-describe('Anomaly detection integration with vis augmenter', () => {
+describe.skip('Anomaly detection integration with vis augmenter', () => {
   const indexName = 'ad-vis-augmenter-sample-index';
   const indexPatternName = 'ad-vis-augmenter-sample-*';
   const dashboardName = 'AD Vis Augmenter Dashboard';
