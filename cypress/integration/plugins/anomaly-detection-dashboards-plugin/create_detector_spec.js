@@ -52,11 +52,11 @@ context('Create detector workflow', () => {
     cy.getElementByTestId('indicesFilter').type(`${TEST_INDEX_NAME}{enter}`);
     selectTopItemFromFilter('timestampFilter', false);
 
-    // cy.getElementByTestId('defineDetectorNextButton').click();
-    // cy.getElementByTestId('defineOrEditDetectorTitle').should('not.exist');
-    // cy.getElementByTestId('configureOrEditModelConfigurationTitle').should(
-    //   'exist'
-    // );
+    cy.getElementByTestId('defineDetectorNextButton').click();
+    cy.getElementByTestId('defineOrEditDetectorTitle').should('not.exist');
+    cy.getElementByTestId('configureOrEditModelConfigurationTitle').should(
+      'exist'
+    );
 
     // // Configure model step
     // cy.getElementByTestId('featureNameTextInput-0').type(TEST_FEATURE_NAME);
