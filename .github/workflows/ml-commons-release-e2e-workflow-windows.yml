@@ -2,8 +2,6 @@ name: ML Commons Release tests workflow in Bundled OpenSearch Dashboards (Window
 on:
   pull_request:
     branches: ['**']
-  push:
-    branches: ['**']
 
 jobs:
   tests:
