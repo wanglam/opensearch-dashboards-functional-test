@@ -1,4 +1,4 @@
-name: Bundle Snapshot based E2E Cypress tests workflow for core Dashboards
+name: Debug discover histogram workflow
 on: push
 
 jobs:
