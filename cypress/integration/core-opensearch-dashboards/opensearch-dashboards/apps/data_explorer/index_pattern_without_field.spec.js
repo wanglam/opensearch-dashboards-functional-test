@@ -58,25 +58,11 @@ describe('index pattern without field spec', () => {
     cy.contains('button', indexName).click();
     cy.waitForLoader();
     cy.wait('@getIndexPatternDetail').then((req) => {
-      Cypress.log({
-        displayName: 'response body',
-        message: JSON.stringify(
-          req.response.body.saved_objects
-            .filter((item) => item.id === 'with-timefield')
-            .map((item) => {
-              if (
-                typeof item !== 'undefined' &&
-                typeof item.attributes !== 'undefined'
-              ) {
-                if (typeof item.attributes.timeFieldName !== 'undefined') {
-                  return item.attributes.timeFieldName;
-                }
-                return Object.keys(item.attributes);
-              }
-              if (item.error) return item.error;
-              return item;
-            })
-        ),
+      req.response.body.saved_objects.forEach((item) => {
+        if (item.error) {
+          Cypress.log(`${item.id}-${item.type}`);
+          Cypress.log(item.error.message);
+        }
       });
     });
 
