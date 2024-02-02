@@ -62,7 +62,18 @@ describe('index pattern without field spec', () => {
         if (item.error) {
           Cypress.log({
             displayName: `${item.id}-${item.type}`,
-            message: item.error.message,
+            message: item.error.message.split('').reduce(
+              (prev, current) => {
+                if (prev[prev.length - 1].length < 30) {
+                  prev[prev.length - 1] += current;
+                  return prev;
+                }
+                return [...prev, current];
+              },
+              [[]]
+            ).join(`
+
+`),
           });
         }
       });
