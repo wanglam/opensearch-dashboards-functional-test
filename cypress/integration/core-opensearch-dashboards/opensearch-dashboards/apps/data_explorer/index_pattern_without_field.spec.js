@@ -54,11 +54,13 @@ describe('index pattern without field spec', () => {
       .click();
     cy.contains('button', indexName).click();
     cy.waitForLoader();
-    cy.request(
-      `${Cypress.env('openSearchUrl')}/_plugins/_security/api/tenancy/config`
-    ).then(({ body }) => {
-      cy.log(JSON.stringify(body));
-    });
+    if (Cypress.env('SECURITY_ENABLED')) {
+      cy.request(
+        `${Cypress.env('openSearchUrl')}/_plugins/_security/api/tenancy/config`
+      ).then(({ body }) => {
+        cy.log(JSON.stringify(body));
+      });
+    }
     cy.request(
       `${Cypress.env(
         'openSearchUrl'
