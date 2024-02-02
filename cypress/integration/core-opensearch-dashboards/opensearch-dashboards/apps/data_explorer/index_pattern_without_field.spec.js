@@ -73,7 +73,8 @@ describe('index pattern without field spec', () => {
                 }
                 return Object.keys(item.attributes);
               }
-              return Object.keys(item);
+              if (item.error) return item.error;
+              return item;
             })
         ),
       });
