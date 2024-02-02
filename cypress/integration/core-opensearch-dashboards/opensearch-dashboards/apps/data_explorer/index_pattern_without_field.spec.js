@@ -48,12 +48,26 @@ describe('index pattern without field spec', () => {
   });
 
   it('should display a timepicker after switching to an index pattern with timefield', () => {
+    cy.intercept('POST', '/api/saved_objects/_bulk_get').as(
+      'getIndexPatternDetail'
+    );
     const indexName = 'with-timefield';
     cy.getElementByTestId('comboBoxToggleListButton')
       .should('be.visible')
       .click();
     cy.contains('button', indexName).click();
     cy.waitForLoader();
+    cy.wait('@getIndexPatternDetail').then((req) => {
+      Cypress.log({
+        displayName: 'response body',
+        message: JSON.stringify(
+          req.response.body.saved_objects
+            .filter((item) => item.id === 'with-timefield')
+            .map((item) => item.attributes.timeFieldName)
+        ),
+      });
+    });
+
     if (Cypress.env('SECURITY_ENABLED')) {
       cy.request(`/api/v1/auth/dashboardsinfo`).then(({ body }) => {
         cy.log(JSON.stringify(body));
@@ -64,13 +78,6 @@ describe('index pattern without field spec', () => {
         cy.log(JSON.stringify(body));
       });
     }
-    cy.request(
-      `${Cypress.env(
-        'openSearchUrl'
-      )}/.kibana/_doc/index-pattern:with-timefield`
-    ).then(({ body }) => {
-      cy.log(JSON.stringify(body._source['index-pattern'].timeFieldName));
-    });
     cy.getElementByTestId('superDatePickerToggleQuickMenuButton').should(
       'be.visible'
     );
