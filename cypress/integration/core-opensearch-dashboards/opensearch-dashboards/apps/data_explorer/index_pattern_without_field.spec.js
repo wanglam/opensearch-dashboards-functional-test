@@ -54,6 +54,11 @@ describe('index pattern without field spec', () => {
       .click();
     cy.contains('button', indexName).click();
     cy.waitForLoader();
+    cy.request(
+      'https://localhost:9200/.kibana/_doc/index-pattern:with-timefield'
+    ).then(({ body }) => {
+      cy.log(JSON.stringify(body._source));
+    });
     cy.getElementByTestId('superDatePickerToggleQuickMenuButton').should(
       'be.visible'
     );
