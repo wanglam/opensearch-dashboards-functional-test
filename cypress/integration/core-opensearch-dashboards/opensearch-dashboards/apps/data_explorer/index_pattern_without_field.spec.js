@@ -63,7 +63,18 @@ describe('index pattern without field spec', () => {
         message: JSON.stringify(
           req.response.body.saved_objects
             .filter((item) => item.id === 'with-timefield')
-            .map((item) => item.attributes.timeFieldName)
+            .map((item) => {
+              if (
+                typeof item !== 'undefined' &&
+                typeof item.attributes !== 'undefined'
+              ) {
+                if (typeof item.attributes.timeFieldName !== 'undefined') {
+                  return item.attributes.timeFieldName;
+                }
+                return item.attributes;
+              }
+              return item;
+            })
         ),
       });
     });
