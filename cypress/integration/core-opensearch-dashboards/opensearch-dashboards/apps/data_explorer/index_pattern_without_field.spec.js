@@ -55,6 +55,9 @@ describe('index pattern without field spec', () => {
     cy.contains('button', indexName).click();
     cy.waitForLoader();
     if (Cypress.env('SECURITY_ENABLED')) {
+      cy.request(`/api/v1/auth/dashboardsinfo`).then(({ body }) => {
+        cy.log(JSON.stringify(body));
+      });
       cy.request(
         `${Cypress.env('openSearchUrl')}/_plugins/_security/api/tenancy/config`
       ).then(({ body }) => {
