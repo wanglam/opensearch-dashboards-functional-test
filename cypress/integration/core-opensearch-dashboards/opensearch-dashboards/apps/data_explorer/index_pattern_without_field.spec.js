@@ -60,8 +60,10 @@ describe('index pattern without field spec', () => {
     cy.wait('@getIndexPatternDetail').then((req) => {
       req.response.body.saved_objects.forEach((item) => {
         if (item.error) {
-          Cypress.log(`${item.id}-${item.type}`);
-          Cypress.log(item.error.message);
+          Cypress.log({
+            displayName: `${item.id}-${item.type}`,
+            message: item.error.message,
+          });
         }
       });
     });
