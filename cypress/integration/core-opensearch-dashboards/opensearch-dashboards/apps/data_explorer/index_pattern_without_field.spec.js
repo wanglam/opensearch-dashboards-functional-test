@@ -51,6 +51,7 @@ describe('index pattern without field spec', () => {
     cy.intercept('POST', '/api/saved_objects/_bulk_get').as(
       'getIndexPatternDetail'
     );
+    cy.wait(10000);
     const indexName = 'with-timefield';
     cy.getElementByTestId('comboBoxToggleListButton')
       .should('be.visible')
@@ -61,19 +62,8 @@ describe('index pattern without field spec', () => {
       req.response.body.saved_objects.forEach((item) => {
         if (item.error) {
           Cypress.log({
-            displayName: `${item.id}-${item.type}`,
-            message: item.error.message.split('').reduce(
-              (prev, current) => {
-                if (prev[prev.length - 1].length < 30) {
-                  prev[prev.length - 1] += current;
-                  return prev;
-                }
-                return [...prev, current];
-              },
-              [[]]
-            ).join(`
-
-`),
+            displayName: `[${item.id}]-${item.type}`,
+            message: item.error.message,
           });
         }
       });
