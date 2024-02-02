@@ -48,25 +48,44 @@ describe('index pattern without field spec', () => {
   });
 
   it('should display a timepicker after switching to an index pattern with timefield', () => {
-    cy.intercept('POST', '/api/saved_objects/_bulk_get').as(
-      'getIndexPatternDetail'
-    );
-    cy.wait(10000);
+    // cy.intercept('POST', '/api/saved_objects/_bulk_get').as(
+    //   'getIndexPatternDetail'
+    // );
     const indexName = 'with-timefield';
     cy.getElementByTestId('comboBoxToggleListButton')
       .should('be.visible')
       .click();
     cy.contains('button', indexName).click();
     cy.waitForLoader();
-    cy.wait('@getIndexPatternDetail').then((req) => {
-      req.response.body.saved_objects.forEach((item) => {
-        if (item.error) {
-          Cypress.log({
-            displayName: 'error',
-            message: `[${item.id}]-${item.type}`,
-          });
-        }
-      });
+    // cy.wait('@getIndexPatternDetail').then((req) => {
+    //   req.response.body.saved_objects.forEach((item) => {
+    //     if (item.error) {
+    //       Cypress.log({
+    //         displayName: 'error',
+    //         message: `[${item.id}]-${item.type}`,
+    //       });
+    //     }
+    //   });
+    // });
+    cy.request({
+      url: '/api/saved_objects/_bulk_get',
+      method: 'POST',
+      body: JSON.stringify([{ type: 'index-pattern', id: indexName }]),
+      headers: {
+        'content-type': 'application/json',
+        'osd-xsrf': true,
+      },
+    }).then(({ body }) => {
+      const savedObject = body.saved_objects[0];
+      if (
+        savedObject &&
+        savedObject.attributes &&
+        savedObject.attributes.timeFieldName
+      ) {
+        cy.log('find:' + JSON.stringify(savedObject.attributes.timeFieldName));
+      } else {
+        cy.log('fallback' + JSON.stringify(savedObject));
+      }
     });
 
     if (Cypress.env('SECURITY_ENABLED')) {
