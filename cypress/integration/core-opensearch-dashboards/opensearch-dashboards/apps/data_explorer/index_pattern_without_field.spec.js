@@ -62,8 +62,8 @@ describe('index pattern without field spec', () => {
       req.response.body.saved_objects.forEach((item) => {
         if (item.error) {
           Cypress.log({
-            displayName: `[${item.id}]-${item.type}`,
-            message: item.error.message,
+            displayName: 'error',
+            message: `[${item.id}]-${item.type}`,
           });
         }
       });
