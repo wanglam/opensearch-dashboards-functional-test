@@ -71,7 +71,7 @@ describe('index pattern without field spec', () => {
                 if (typeof item.attributes.timeFieldName !== 'undefined') {
                   return item.attributes.timeFieldName;
                 }
-                return item.attributes;
+                return Object.keys(item.attributes);
               }
               return Object.keys(item);
             })
