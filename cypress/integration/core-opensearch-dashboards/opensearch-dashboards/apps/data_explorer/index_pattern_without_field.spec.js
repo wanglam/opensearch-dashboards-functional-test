@@ -44,6 +44,17 @@ describe('index pattern without field spec', () => {
     // Go to the Discover page
     miscUtils.visitPage('app/data-explorer/discover#/');
     cy.waitForLoader();
+    cy.request({
+      url: '/api/saved_objects/_find?fields=title&per_page=10000&type=index-pattern',
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'osd-xsrf': true,
+      },
+    }).then(({ body }) => {
+      cy.log('find:' + JSON.stringify(body));
+    });
+    cy.wait(1000);
   });
 
   after(() => {
