@@ -67,6 +67,17 @@ describe('index pattern without field spec', () => {
     cy.getElementByTestId('superDatePickerToggleQuickMenuButton').should(
       'not.exist'
     );
+    cy.request({
+      url: '/api/saved_objects/_find?fields=title&per_page=10000&type=index-pattern',
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'osd-xsrf': true,
+      },
+    }).then(({ body }) => {
+      cy.log('find:' + JSON.stringify(body));
+    });
+    cy.wait(2000);
   });
 
   it('should display a timepicker after switching to an index pattern with timefield', () => {
