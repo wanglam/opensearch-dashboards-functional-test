@@ -30,6 +30,17 @@ describe('index pattern without field spec', () => {
       defaultIndex: 'without-timefield',
     });
 
+    cy.request({
+      url: '/api/saved_objects/_find?fields=title&per_page=10000&type=index-pattern',
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'osd-xsrf': true,
+      },
+    }).then(({ body }) => {
+      cy.log('find:' + JSON.stringify(body));
+    });
+    cy.wait(1000);
     // Go to the Discover page
     miscUtils.visitPage('app/data-explorer/discover#/');
     cy.waitForLoader();
@@ -77,6 +88,7 @@ describe('index pattern without field spec', () => {
     }).then(({ body }) => {
       cy.log('find:' + JSON.stringify(body));
     });
+    cy.wait(1000);
     cy.request({
       url: '/api/saved_objects/_bulk_get',
       method: 'POST',
@@ -99,17 +111,6 @@ describe('index pattern without field spec', () => {
         cy.log('fallback' + JSON.stringify(savedObject));
       }
     });
-
-    if (Cypress.env('SECURITY_ENABLED')) {
-      cy.request(`/api/v1/auth/dashboardsinfo`).then(({ body }) => {
-        cy.log(JSON.stringify(body));
-      });
-      cy.request(
-        `${Cypress.env('openSearchUrl')}/_plugins/_security/api/tenancy/config`
-      ).then(({ body }) => {
-        cy.log(JSON.stringify(body));
-      });
-    }
     cy.getElementByTestId('superDatePickerToggleQuickMenuButton').should(
       'be.visible'
     );
