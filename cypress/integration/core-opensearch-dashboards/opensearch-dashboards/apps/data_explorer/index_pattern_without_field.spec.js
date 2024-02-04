@@ -17,6 +17,18 @@ const testFixtureHandler = new TestFixtureHandler(
 
 describe('index pattern without field spec', () => {
   before(() => {
+    if (Cypress.env('SECURITY_ENABLED')) {
+      /**
+       * Security plugin is using private tenant as default.
+       * So here we'd need to set global tenant as default manually.
+       */
+      cy.changeDefaultTenant({
+        multitenancy_enabled: true,
+        private_tenant_enabled: true,
+        default_tenant: 'Global',
+      });
+      CURRENT_TENANT.newTenant = 'global';
+    }
     testFixtureHandler.importJSONMapping(
       'cypress/fixtures/dashboard/opensearch_dashboards/data_explorer/index_pattern_without_timefield/mappings.json.txt'
     );
