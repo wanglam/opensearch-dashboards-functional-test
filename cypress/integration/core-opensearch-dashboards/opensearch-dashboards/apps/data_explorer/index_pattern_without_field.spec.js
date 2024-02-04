@@ -17,18 +17,7 @@ const testFixtureHandler = new TestFixtureHandler(
 
 describe('index pattern without field spec', () => {
   before(() => {
-    if (Cypress.env('SECURITY_ENABLED')) {
-      /**
-       * Security plugin is using private tenant as default.
-       * So here we'd need to set global tenant as default manually.
-       */
-      cy.changeDefaultTenant({
-        multitenancy_enabled: true,
-        private_tenant_enabled: true,
-        default_tenant: 'Global',
-      });
-      CURRENT_TENANT.newTenant = 'global';
-    }
+    CURRENT_TENANT.newTenant = 'global';
     testFixtureHandler.importJSONMapping(
       'cypress/fixtures/dashboard/opensearch_dashboards/data_explorer/index_pattern_without_timefield/mappings.json.txt'
     );
@@ -59,12 +48,68 @@ describe('index pattern without field spec', () => {
   });
 
   it('should display a timepicker after switching to an index pattern with timefield', () => {
+    // cy.intercept('POST', '/api/saved_objects/_bulk_get').as(
+    //   'getIndexPatternDetail'
+    // );
     const indexName = 'with-timefield';
     cy.getElementByTestId('comboBoxToggleListButton')
       .should('be.visible')
       .click();
     cy.contains('button', indexName).click();
     cy.waitForLoader();
+    // cy.wait('@getIndexPatternDetail').then((req) => {
+    //   req.response.body.saved_objects.forEach((item) => {
+    //     if (item.error) {
+    //       Cypress.log({
+    //         displayName: 'error',
+    //         message: `[${item.id}]-${item.type}`,
+    //       });
+    //     }
+    //   });
+    // });
+    cy.request({
+      url: '/api/saved_objects/_find?fields=title&per_page=10000&type=index-pattern',
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'osd-xsrf': true,
+      },
+    }).then(({ body }) => {
+      cy.log('find:' + JSON.stringify(body));
+    });
+    cy.request({
+      url: '/api/saved_objects/_bulk_get',
+      method: 'POST',
+      body: JSON.stringify([{ type: 'index-pattern', id: indexName }]),
+      headers: {
+        'content-type': 'application/json',
+        'osd-xsrf': true,
+      },
+    }).then(({ body }) => {
+      const savedObject = body.saved_objects[0];
+      if (
+        savedObject &&
+        savedObject.attributes &&
+        savedObject.attributes.timeFieldName
+      ) {
+        cy.log(
+          'bulk get:' + JSON.stringify(savedObject.attributes.timeFieldName)
+        );
+      } else {
+        cy.log('fallback' + JSON.stringify(savedObject));
+      }
+    });
+
+    if (Cypress.env('SECURITY_ENABLED')) {
+      cy.request(`/api/v1/auth/dashboardsinfo`).then(({ body }) => {
+        cy.log(JSON.stringify(body));
+      });
+      cy.request(
+        `${Cypress.env('openSearchUrl')}/_plugins/_security/api/tenancy/config`
+      ).then(({ body }) => {
+        cy.log(JSON.stringify(body));
+      });
+    }
     cy.getElementByTestId('superDatePickerToggleQuickMenuButton').should(
       'be.visible'
     );
