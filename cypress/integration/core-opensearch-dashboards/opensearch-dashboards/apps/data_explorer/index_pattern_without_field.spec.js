@@ -81,6 +81,17 @@ describe('index pattern without field spec', () => {
   });
 
   it('should display a timepicker after switching to an index pattern with timefield', () => {
+    cy.request({
+      url: '/api/saved_objects/_find?fields=title&per_page=10000&type=index-pattern',
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'osd-xsrf': true,
+      },
+    }).then(({ body }) => {
+      cy.log('find before click:' + JSON.stringify(body));
+    });
+    cy.wait(2000);
     // cy.intercept('POST', '/api/saved_objects/_bulk_get').as(
     //   'getIndexPatternDetail'
     // );
