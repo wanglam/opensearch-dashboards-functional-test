@@ -29,7 +29,9 @@ describe('index pattern without field spec', () => {
     cy.setAdvancedSetting({
       defaultIndex: 'without-timefield',
     });
+  });
 
+  beforeEach(() => {
     cy.request({
       url: '/api/saved_objects/_find?fields=title&per_page=10000&type=index-pattern',
       method: 'GET',
