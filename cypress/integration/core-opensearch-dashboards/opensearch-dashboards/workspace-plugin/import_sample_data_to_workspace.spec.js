@@ -430,6 +430,10 @@ if (Cypress.env('WORKSPACE_ENABLED')) {
       cy.getElementByTestId('breadcrumb last').contains(
         '[eCommerce] Revenue Dashboard'
       );
+      cy.get('[data-title="[eCommerce] Total Revenue"]').should(
+        'not.contain',
+        'No results found'
+      );
       cy.visit(`/w/${workspaceId}/app/import_sample_data`);
 
       cy.getElementByTestId('removeSampleDataSetecommerce').click();
@@ -446,21 +450,9 @@ if (Cypress.env('WORKSPACE_ENABLED')) {
       cy.getElementByTestId('breadcrumb last').contains(
         '[Flights] Global Flight Dashboard'
       );
-      cy.visit(`/w/${workspaceId}/app/import_sample_data`);
-
-      cy.getElementByTestId('removeSampleDataSetflights').click();
-    });
-
-    it('should be able to visit flights dashboards', () => {
-      cy.getElementByTestId('addSampleDataSetflights').click();
-
-      cy.getElementByTestId('launchSampleDataSetflights')
-        .should('be.visible')
-        .click();
-
-      cy.location('href').should('include', `/w/${workspaceId}/app/dashboards`);
-      cy.getElementByTestId('breadcrumb last').contains(
-        '[Flights] Global Flight Dashboard'
+      cy.get('[data-title="[Flights] Flight Delays"]').should(
+        'not.contain',
+        'No results found'
       );
       cy.visit(`/w/${workspaceId}/app/import_sample_data`);
 
@@ -476,6 +468,10 @@ if (Cypress.env('WORKSPACE_ENABLED')) {
 
       cy.location('href').should('include', `/w/${workspaceId}/app/dashboards`);
       cy.getElementByTestId('breadcrumb last').contains('[Logs] Web Traffic');
+      cy.get('[data-title="[Logs] Unique Visitors vs. Average Bytes').should(
+        'not.contain',
+        'No results found'
+      );
       cy.visit(`/w/${workspaceId}/app/import_sample_data`);
 
       cy.getElementByTestId('removeSampleDataSetlogs').click();
