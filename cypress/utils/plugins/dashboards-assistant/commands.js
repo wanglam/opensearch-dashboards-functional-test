@@ -135,7 +135,11 @@ Cypress.Commands.add('registerRootAgent', () => {
 });
 
 Cypress.Commands.add('putRootAgentId', (agentId) => {
-  if (Cypress.env('SECURITY_ENABLED')) {
+  console.log(agentId);
+  if (
+    Cypress.env('SECURITY_ENABLED') &&
+    !Cypress.env('DATASOURCE_MANAGEMENT_ENABLED')
+  ) {
     // The .plugins-ml-config index is a system index and need to call the API by using certificate file
     return cy.exec(
       `curl -k --cert <(cat <<EOF \n${certPublicKeyContent}\nEOF\n) --key <(cat <<EOF\n${certPrivateKeyContent}\nEOF\n) -XPUT '${BACKEND_BASE_PATH}${ML_COMMONS_API.UPDATE_ROOT_AGENT_CONFIG}'  -H 'Content-Type: application/json' -d '{"type":"os_chat_root_agent","configuration":{"agent_id":"${agentId}"}}'`
@@ -197,9 +201,28 @@ Cypress.Commands.add('sendAssistantMessage', (body) =>
   apiRequest(`${BASE_PATH}${ASSISTANT_API.SEND_MESSAGE}`, 'POST', body)
 );
 
+Cypress.Commands.add(
+  'sendAssistantMessageByDataSourceId',
+  (body, dataSourceId) =>
+    apiRequest(
+      `${BASE_PATH}${ASSISTANT_API.SEND_MESSAGE}?dataSourceId=${dataSourceId}`,
+      'POST',
+      body
+    )
+);
+
 Cypress.Commands.add('deleteConversation', (conversationId) =>
   apiRequest(
     `${BASE_PATH}${ASSISTANT_API.CONVERSATION}/${conversationId}`,
     'DELETE'
   )
+);
+
+Cypress.Commands.add(
+  'deleteConversationByDataSourceId',
+  (conversationId, dataSourceId) =>
+    apiRequest(
+      `${BASE_PATH}${ASSISTANT_API.CONVERSATION}/${conversationId}?dataSourceId=${dataSourceId}`,
+      'DELETE'
+    )
 );
