@@ -135,7 +135,6 @@ Cypress.Commands.add('registerRootAgent', () => {
 });
 
 Cypress.Commands.add('putRootAgentId', (agentId) => {
-  console.log(agentId);
   if (
     Cypress.env('SECURITY_ENABLED') &&
     !Cypress.env('DATASOURCE_MANAGEMENT_ENABLED')

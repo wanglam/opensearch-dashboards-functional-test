@@ -80,7 +80,7 @@ if (
 }
 
 /**
- * Make setup step in here so that all the test files in dashboards-assistant
+ * Make setup step in here so that all the test with MDS files in dashboards-assistant
  * won't need to call these commands.
  */
 if (
