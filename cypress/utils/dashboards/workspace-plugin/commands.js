@@ -41,7 +41,7 @@ Cypress.Commands.add('deleteWorkspaceByName', (workspaceName) => {
   });
 });
 
-Cypress.Commands.add('createWorkspace', (workspace) => {
+Cypress.Commands.add('createWorkspace', (workspaceAttributes, permissions) => {
   cy.request({
     method: 'POST',
     url: `${BASE_PATH}${WORKSPACE_API_PREFIX}`,
@@ -50,22 +50,23 @@ Cypress.Commands.add('createWorkspace', (workspace) => {
     },
     body: {
       attributes: {
-        ...workspace,
-        description: workspace.description || 'test_description',
+        ...workspaceAttributes,
+        description: workspaceAttributes.description || 'test_description',
       },
+      permissions,
     },
   }).then((resp) => {
     if (resp && resp.body && resp.body.success) {
       return resp.body.result.id;
     } else {
-      throw new Error(`Create workspace ${workspace.name} failed!`);
+      throw new Error(`Create workspace ${workspaceAttributes.name} failed!`);
     }
   });
 });
 
 /**
  * Check whether the given workspace is equal to the expected workspace or not,
- * the given workspace is as exepcted when the name, description, features, and permissions are as expected.
+ * the given workspace is as expected when the name, description, features, and permissions are as expected.
  */
 Cypress.Commands.add('checkWorkspace', (workspaceId, expected) => {
   cy.request({

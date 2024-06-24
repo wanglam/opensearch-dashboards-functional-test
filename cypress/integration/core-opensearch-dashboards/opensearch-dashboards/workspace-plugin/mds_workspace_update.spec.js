@@ -12,14 +12,20 @@ if (Cypress.env('WORKSPACE_ENABLED')) {
   describe('Update workspace', () => {
     before(() => {
       cy.deleteWorkspaceByName(workspaceName);
-      cy.createWorkspace({
-        name: workspaceName,
-        features: [
-          'workspace_overview',
-          'workspace_update',
-          'use-case-observability',
-        ],
-      }).then((value) => (workspaceId = value));
+      cy.createWorkspace(
+        {
+          name: workspaceName,
+          features: [
+            'workspace_overview',
+            'workspace_update',
+            'use-case-observability',
+          ],
+        },
+        {
+          library_write: { users: ['%current_user%'] },
+          write: { users: ['%current_user%'] },
+        }
+      ).then((value) => (workspaceId = value));
     });
 
     beforeEach(() => {
@@ -112,9 +118,6 @@ if (Cypress.env('WORKSPACE_ENABLED')) {
         cy.getElementByTestId(
           'workspaceForm-workspaceDetails-descriptionInputText'
         ).type('test_workspace_description.+~!');
-        cy.getElementByTestId(
-          'euiColorPickerAnchor workspaceForm-workspaceDetails-colorPicker'
-        ).type('#D36086');
         cy.getElementByTestId('workspaceUseCase-observability').check({
           force: true,
         });
@@ -163,9 +166,6 @@ if (Cypress.env('WORKSPACE_ENABLED')) {
           cy.getElementByTestId(
             'workspaceForm-workspaceDetails-descriptionInputText'
           ).type('test_workspace_description');
-          cy.getElementByTestId(
-            'euiColorPickerAnchor workspaceForm-workspaceDetails-colorPicker'
-          ).type('#000000');
           cy.getElementByTestId('workspaceUseCase-observability').check({
             force: true,
           });
@@ -173,7 +173,7 @@ if (Cypress.env('WORKSPACE_ENABLED')) {
             'workspaceForm-permissionSettingPanel-user-addNew'
           ).click();
           cy.getElementByTestId('comboBoxSearchInput')
-            .last()
+            .eq(1)
             .type('test_user_Fnxs972xC');
           cy.getElementByTestId('workspaceForm-bottomBar-updateButton').click({
             force: true,

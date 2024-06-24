@@ -35,9 +35,6 @@ if (Cypress.env('WORKSPACE_ENABLED')) {
         cy.getElementByTestId(
           'workspaceForm-workspaceDetails-descriptionInputText'
         ).type('test_workspace_description.+~!');
-        cy.getElementByTestId(
-          'euiColorPickerAnchor workspaceForm-workspaceDetails-colorPicker'
-        ).type('#000000');
         cy.getElementByTestId('workspaceUseCase-observability').check({
           force: true,
         });
@@ -136,9 +133,6 @@ if (Cypress.env('WORKSPACE_ENABLED')) {
           cy.getElementByTestId(
             'workspaceForm-workspaceDetails-descriptionInputText'
           ).type('test_workspace_description');
-          cy.getElementByTestId(
-            'euiColorPickerAnchor workspaceForm-workspaceDetails-colorPicker'
-          ).type('#000000');
           cy.getElementByTestId('workspaceUseCase-observability').check({
             force: true,
           });
@@ -146,7 +140,7 @@ if (Cypress.env('WORKSPACE_ENABLED')) {
             'workspaceForm-permissionSettingPanel-user-addNew'
           ).click();
           cy.getElementByTestId('comboBoxSearchInput')
-            .last()
+            .eq(1)
             .type('test_user_sfslja260');
           cy.getElementByTestId('workspaceForm-bottomBar-createButton').click({
             force: true,
